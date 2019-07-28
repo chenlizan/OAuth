@@ -1,6 +1,7 @@
 package com.oauth.user;
 
 import com.oauth.main.OAuthApplication;
+import com.oauth.mongo.entity.UserInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.net.URL;
@@ -23,7 +28,6 @@ public class UserInfoTests {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
-    private UserInfo userInfo;
 
     @Before
     public void setUp() throws Exception {
@@ -33,15 +37,14 @@ public class UserInfoTests {
     }
 
     @Test
-    public void contextLoads() {
-        userInfo.setPassword("123456");
-        userInfo.getPassword();
+    public void register() {
+        UserInfo userInfo = new UserInfo("chenlizan", "123456", "15623078770");
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        headers.setContentType(type);
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+        HttpEntity<UserInfo> httpEntity = new HttpEntity<UserInfo>(userInfo, headers);
+        ResponseEntity<UserInfo> responseEntity = testRestTemplate.postForEntity(this.base.toString() + "/register", httpEntity, UserInfo.class);
+        System.out.println(responseEntity);
     }
-
-    @Test
-    public void getUserInfo() {
-        String userInfo = testRestTemplate.getForObject(this.base.toString() + "/getUserInfo", String.class);
-        System.out.println(userInfo);
-    }
-
 }

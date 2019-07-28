@@ -1,29 +1,31 @@
 package com.oauth.user;
 
-
-import com.oauth.mongo.entity.Customer;
-import com.oauth.mongo.CustomerRepository;
+import com.mongodb.MongoException;
+import com.oauth.mongo.UserInfoRepository;
+import com.oauth.mongo.entity.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserInfoController {
 
     @Autowired
-    private CustomerRepository repository;
-
-    @Autowired
     private MongoOperations mongoOperations;
 
-    @RequestMapping(value = "/getUserInfo", method = RequestMethod.GET)
+    @Autowired
+    private UserInfoRepository userInfoRepository;
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @ResponseStatus()
+    public Object register(@RequestBody UserInfo userInfo) throws MongoException {
+        return mongoOperations.save(userInfo);
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public String getUserInfo() {
-        repository.save(new Customer("Alice", "Smith"));
-        long count = mongoOperations.getCollection("customer").count();
-        return "abc";
+    public String login(@RequestBody UserInfo userInfo) {
+        System.out.println(userInfo);
+        return "success";
     }
 }

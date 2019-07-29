@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @Document
 public class UserInfo {
+
     @Id
     private String id;
 
@@ -26,4 +27,5 @@ public class UserInfo {
         this.password = password;
         this.phone = phone;
     }
+
 }

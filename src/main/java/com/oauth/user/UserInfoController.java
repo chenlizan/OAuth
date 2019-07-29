@@ -1,7 +1,7 @@
 package com.oauth.user;
 
 import com.mongodb.MongoException;
-import com.oauth.mongo.UserInfoRepository;
+import com.oauth.mongo.repository.UserInfoRepository;
 import com.oauth.mongo.entity.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -19,7 +19,7 @@ public class UserInfoController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseStatus()
     public Object register(@RequestBody UserInfo userInfo) throws MongoException {
-        return mongoOperations.save(userInfo);
+        return userInfoRepository.save(userInfo);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -28,4 +28,5 @@ public class UserInfoController {
         System.out.println(userInfo);
         return "success";
     }
+
 }

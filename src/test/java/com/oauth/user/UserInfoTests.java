@@ -47,4 +47,5 @@ public class UserInfoTests {
         ResponseEntity<UserInfo> responseEntity = testRestTemplate.postForEntity(this.base.toString() + "/register", httpEntity, UserInfo.class);
         System.out.println(responseEntity);
     }
+
 }

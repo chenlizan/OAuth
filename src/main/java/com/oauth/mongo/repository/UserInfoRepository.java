@@ -1,4 +1,4 @@
-package com.oauth.mongo;
+package com.oauth.mongo.repository;
 
 import com.oauth.mongo.entity.UserInfo;
 import org.springframework.data.mongodb.repository.MongoRepository;

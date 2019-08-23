@@ -31,6 +31,11 @@ public class UserInfoController {
         return "success";
     }
 
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String index(){
+        return "Hello Spring Security";
+    }
+
     @GetMapping("/product/{id}")
     public String getProduct(@PathVariable String id) {
         //for debug

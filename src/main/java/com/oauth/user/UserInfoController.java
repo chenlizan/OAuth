@@ -18,6 +18,11 @@ public class UserInfoController {
     @Autowired
     private UserInfoRepository userInfoRepository;
 
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String index() {
+        return "Hello Spring Security";
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseStatus()
     public Object register(@RequestBody UserInfo userInfo) throws MongoException {
@@ -31,9 +36,11 @@ public class UserInfoController {
         return "success";
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index(){
-        return "Hello Spring Security";
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @ResponseBody
+    public String logout() {
+        System.out.println("logout");
+        return "success";
     }
 
     @GetMapping("/product/{id}")

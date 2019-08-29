@@ -5,8 +5,6 @@ import com.oauth.mongo.repository.UserInfoRepository;
 import com.oauth.mongo.entity.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -43,18 +41,18 @@ public class UserInfoController {
         return "success";
     }
 
-    @GetMapping("/product/{id}")
-    public String getProduct(@PathVariable String id) {
-        //for debug
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return "product id : " + id;
-    }
-
-    @GetMapping("/order/{id}")
-    public String getOrder(@PathVariable String id) {
-        //for debug
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return "order id : " + id;
-    }
+//    @GetMapping("/product/{id}")
+//    public String getProduct(@PathVariable String id) {
+//        //for debug
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        return "product id : " + id;
+//    }
+//
+//    @GetMapping("/order/{id}")
+//    public String getOrder(@PathVariable String id) {
+//        //for debug
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        return "order id : " + id;
+//    }
 
 }

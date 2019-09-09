@@ -1,5 +1,6 @@
 package com.oauth.config;
 
+import com.oauth.filter.MyFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -34,6 +35,8 @@ public class OAuth2ServerConfig {
                     .authorizeRequests()
                     .antMatchers("/", "/login").permitAll()
                     .anyRequest().authenticated();
+
+            http.addFilter(new MyFilter());
         }
     }
 
@@ -44,7 +47,7 @@ public class OAuth2ServerConfig {
         @Override
         public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
             clients.inMemory()
-            .withClient("client")
+                    .withClient("client")
                     .secret("secret").authorizedGrantTypes("password");
         }
 

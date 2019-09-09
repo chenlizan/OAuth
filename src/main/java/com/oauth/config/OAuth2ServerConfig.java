@@ -37,6 +37,19 @@ public class OAuth2ServerConfig {
         }
     }
 
+    @Configuration
+    @EnableAuthorizationServer
+    protected static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
+
+        @Override
+        public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+            clients.inMemory()
+            .withClient("client")
+                    .secret("secret").authorizedGrantTypes("password");
+        }
+
+    }
+
 //
 //    @Configuration
 //    @EnableAuthorizationServer

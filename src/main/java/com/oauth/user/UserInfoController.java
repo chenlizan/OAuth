@@ -31,14 +31,20 @@ public class UserInfoController {
     @ResponseBody
     public String login(@RequestBody UserInfo userInfo) {
         System.out.println(userInfo);
-        return "success";
+        return "success login";
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     @ResponseBody
     public String logout() {
         System.out.println("logout");
-        return "success";
+        return "success logout";
+    }
+
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public String test() {
+        System.out.println("test");
+        return "success test";
     }
 
 //    @GetMapping("/product/{id}")

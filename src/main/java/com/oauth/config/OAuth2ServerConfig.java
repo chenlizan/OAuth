@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -23,7 +24,13 @@ public class OAuth2ServerConfig {
 
         @Override
         public void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests().anyRequest().authenticated();
+            http
+                    .csrf().disable()
+                    .httpBasic().disable()
+                    .authorizeRequests()
+                    .antMatchers("/api/**").authenticated()
+                    .and()
+                    .requestMatchers().antMatchers("/api/**");
         }
 
     }
@@ -36,10 +43,16 @@ public class OAuth2ServerConfig {
         @Qualifier("authenticationManagerBean")
         private AuthenticationManager authenticationManager;
 
+        @Autowired
+        private PasswordEncoder passwordEncoder;
+
         @Override
         public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
             security
+                    .realm("oauth2-resources")
+                    //url:/oauth/token_key,exposes public key for token verification if using JWT tokens
                     .tokenKeyAccess("permitAll()")
+                    //url:/oauth/check_token allow check token
                     .checkTokenAccess("isAuthenticated()")
                     .allowFormAuthenticationForClients();
         }
@@ -47,10 +60,14 @@ public class OAuth2ServerConfig {
         @Override
         public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
             clients.inMemory()
-                    .withClient("chenlizan")
-                    .secret("123456")
-                    .authorizedGrantTypes("client_credentials", "password", "refresh_token")
-                    .scopes("all");
+                    .withClient("client")
+                    .secret("secret")
+                    .redirectUris("http://www.baidu.com")
+                    .authorizedGrantTypes("authorization_code", "password", "refresh_token")
+                    .scopes("all")
+                    .resourceIds("oauth2-resource")
+                    .accessTokenValiditySeconds(1200)
+                    .refreshTokenValiditySeconds(50000);
         }
 
         @Override

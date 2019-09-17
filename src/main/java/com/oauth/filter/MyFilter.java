@@ -17,7 +17,7 @@ public class MyFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain) throws IOException, ServletException {
-        System.out.println("This is a filter before UsernamePasswordAuthenticationFilter.");
+        System.out.println("This is a filter before HeaderWriterFilter.");
         chain.doFilter(request, response);
     }
 }

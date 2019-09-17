@@ -27,10 +27,8 @@ public class UserInfoController {
         return userInfoRepository.save(userInfo);
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    @ResponseBody
-    public String login(@RequestBody UserInfo userInfo) {
-        System.out.println(userInfo);
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String login() {
         return "success login";
     }
 

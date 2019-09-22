@@ -25,12 +25,10 @@ public class OAuth2ServerConfig {
         @Override
         public void configure(HttpSecurity http) throws Exception {
             http
-                    .csrf().disable()
-                    .httpBasic().disable()
-                    .authorizeRequests()
-                    .antMatchers("/api/**").authenticated()
+                    .requestMatchers().antMatchers("/api/**")
                     .and()
-                    .requestMatchers().antMatchers("/api/**");
+                    .authorizeRequests()
+                    .antMatchers("/api/**").authenticated();
         }
 
     }
@@ -42,9 +40,6 @@ public class OAuth2ServerConfig {
         @Autowired
         @Qualifier("authenticationManagerBean")
         private AuthenticationManager authenticationManager;
-
-        @Autowired
-        private PasswordEncoder passwordEncoder;
 
         @Override
         public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
@@ -62,7 +57,7 @@ public class OAuth2ServerConfig {
             clients.inMemory()
                     .withClient("client")
                     .secret("secret")
-                    .redirectUris("http://www.baidu.com")
+                    .redirectUris("http://localhost:8080")
                     .authorizedGrantTypes("authorization_code", "password", "refresh_token")
                     .scopes("all")
                     .resourceIds("oauth2-resource")

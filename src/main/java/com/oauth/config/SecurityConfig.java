@@ -1,7 +1,6 @@
 package com.oauth.config;
 
 import com.oauth.filter.MyFilter;
-import org.apache.catalina.filters.HttpHeaderSecurityFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,10 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.header.HeaderWriterFilter;
-import org.springframework.web.filter.FormContentFilter;
 
 
 @Configuration
@@ -39,17 +35,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .httpBasic().disable()
+                .httpBasic().disable();
+        http
                 .authorizeRequests()
-                .antMatchers("/oauth/**", "/login")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
+                .antMatchers("/oauth/**").permitAll()
+                .anyRequest().authenticated()
                 .and()
-                .formLogin()
-//                .loginPage("/login")
-                .permitAll();
-
+                .formLogin();
+        http
+                .addFilterBefore(new MyFilter(), HeaderWriterFilter.class);
     }
 
     @Bean
@@ -62,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 }
 
-//http://localhost:8080/oauth/authorize?response_type=code&client_id=client&redirect_uri=http://www.baidu.com
+//http://localhost:8080/oauth/authorize?response_type=code&client_id=client&redirect_uri=http://localhost:8080
 
 /**
  * 二者关系

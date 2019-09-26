@@ -1,4 +1,4 @@
-package com.oauth.config;
+package com.oauth.provisioning;
 
 import com.oauth.mongo.repository.UserDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +15,7 @@ import java.util.Collection;
 @Component
 public class MongoUserDetailsManager implements UserDetailsManager {
 
-    @Autowired
-    UserDetailsRepository userDetailsRepository;
+    private UserDetailsRepository userDetailsRepository;
 
     private void validateUserDetails(UserDetails user) {
         Assert.hasText(user.getUsername(), "Username may not be empty or null");
@@ -33,13 +32,14 @@ public class MongoUserDetailsManager implements UserDetailsManager {
         }
     }
 
-    public MongoUserDetailsManager() {
+    public MongoUserDetailsManager(UserDetailsRepository userDetailsRepository) {
+        this.userDetailsRepository = userDetailsRepository;
     }
 
     @Override
     public void createUser(final UserDetails user) {
         validateUserDetails(user);
-        userDetailsRepository.save(user);
+        this.userDetailsRepository.save(user);
     }
 
     @Override

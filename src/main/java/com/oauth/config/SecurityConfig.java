@@ -1,6 +1,9 @@
 package com.oauth.config;
 
 import com.oauth.filter.MyFilter;
+import com.oauth.mongo.repository.UserDetailsRepository;
+import com.oauth.provisioning.MongoUserDetailsManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -31,6 +33,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return NoOpPasswordEncoder.getInstance();
     }
 
+    @Autowired
+    private UserDetailsRepository userDetailsRepository;
+
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
@@ -50,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected UserDetailsService userDetailsService() {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        MongoUserDetailsManager manager1 = new MongoUserDetailsManager();
+        MongoUserDetailsManager manager1 = new MongoUserDetailsManager(userDetailsRepository);
         manager1.createUser(User.withUsername("chenlizan").password("123456").authorities("USER").build());
         manager.createUser(User.withUsername("chenlizan").password("123456").authorities("USER").build());
         return manager;

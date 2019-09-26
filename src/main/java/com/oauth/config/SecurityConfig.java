@@ -50,6 +50,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected UserDetailsService userDetailsService() {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+        MongoUserDetailsManager manager1 = new MongoUserDetailsManager();
+        manager1.createUser(User.withUsername("chenlizan").password("123456").authorities("USER").build());
         manager.createUser(User.withUsername("chenlizan").password("123456").authorities("USER").build());
         return manager;
     }

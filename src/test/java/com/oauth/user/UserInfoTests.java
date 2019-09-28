@@ -13,6 +13,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.net.URL;
@@ -38,7 +39,7 @@ public class UserInfoTests {
 
     @Test
     public void register() {
-        UserInfo userInfo = new UserInfo("chenlizan", "123456", "15623078770");
+        UserInfo userInfo = new UserInfo("chenlizan", "123456", AuthorityUtils.createAuthorityList("USER"));
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);

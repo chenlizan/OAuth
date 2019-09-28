@@ -1,7 +1,7 @@
 package com.oauth.config;
 
 import com.oauth.filter.MyFilter;
-import com.oauth.mongo.repository.UserDetailsRepository;
+import com.oauth.mongo.repository.UserInfoRepository;
 import com.oauth.provisioning.MongoUserDetailsManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -10,11 +10,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.header.HeaderWriterFilter;
 
 
@@ -34,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    private UserDetailsRepository userDetailsRepository;
+    private UserInfoRepository userInfoRepository;
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -43,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable();
         http
                 .authorizeRequests()
-                .antMatchers("/oauth/**").permitAll()
+                .antMatchers("/oauth/**", "/register").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin();
@@ -54,10 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     @Override
     protected UserDetailsService userDetailsService() {
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        MongoUserDetailsManager manager1 = new MongoUserDetailsManager(userDetailsRepository);
-        manager1.createUser(User.withUsername("chenlizan").password("123456").authorities("USER").build());
-        manager.createUser(User.withUsername("chenlizan").password("123456").authorities("USER").build());
+        MongoUserDetailsManager manager = new MongoUserDetailsManager(userInfoRepository);
         return manager;
     }
 

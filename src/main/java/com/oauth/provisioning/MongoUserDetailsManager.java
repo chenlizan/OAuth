@@ -1,21 +1,18 @@
 package com.oauth.provisioning;
 
-import com.oauth.mongo.repository.UserDetailsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
+import com.oauth.mongo.entity.UserInfo;
+import com.oauth.mongo.repository.UserInfoRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
 
-@Component
 public class MongoUserDetailsManager implements UserDetailsManager {
 
-    private UserDetailsRepository userDetailsRepository;
+    private UserInfoRepository userInfoRepository;
 
     private void validateUserDetails(UserDetails user) {
         Assert.hasText(user.getUsername(), "Username may not be empty or null");
@@ -32,24 +29,31 @@ public class MongoUserDetailsManager implements UserDetailsManager {
         }
     }
 
-    public MongoUserDetailsManager(UserDetailsRepository userDetailsRepository) {
-        this.userDetailsRepository = userDetailsRepository;
+    public MongoUserDetailsManager() {
     }
+
+    public MongoUserDetailsManager(UserInfoRepository userInfoRepository) {
+        this.userInfoRepository = userInfoRepository;
+    }
+
+    // ~ UserDetailsManager implementation
+    // ==============================================================================
 
     @Override
     public void createUser(final UserDetails user) {
         validateUserDetails(user);
-        this.userDetailsRepository.save(user);
+        this.userInfoRepository.save((UserInfo) user);
     }
 
     @Override
     public void updateUser(UserDetails user) {
-
+        validateUserDetails(user);
+//        this.userInfoRepository.upsert((UserInfo)user);
     }
 
     @Override
     public void deleteUser(String username) {
-
+//        this.userInfoRepository.findOne({username:username})
     }
 
     @Override

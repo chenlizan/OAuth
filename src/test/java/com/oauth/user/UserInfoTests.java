@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -18,21 +19,23 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.Serializable;
 import java.net.URL;
 
-class TestUserInfo implements Serializable {
-    private String username;
-    private String password;
-    private String[] roles;
-
-    public TestUserInfo(String username, String password, String[] roles) {
-        this.username = username;
-        this.password = password;
-        this.roles = roles;
-    }
-}
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = OAuthApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserInfoTests {
+
+    private static class ResponseUserInfo implements Serializable {
+        private String username;
+        private String password;
+
+        public ResponseUserInfo() {
+        }
+
+        public ResponseUserInfo(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+    }
 
     @LocalServerPort
     private int port;
@@ -51,13 +54,16 @@ public class UserInfoTests {
 
     @Test
     public void register() {
-        TestUserInfo userInfo = new TestUserInfo("chenlizan", "123456", new String[]{"USER"});
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUsername("chenlizan");
+        userInfo.setPassword("123456");
+        userInfo.setRoles(new String[]{"USER"});
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
-//        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
-        HttpEntity<TestUserInfo> httpEntity = new HttpEntity<TestUserInfo>(userInfo, headers);
-        ResponseEntity<UserInfo> responseEntity = testRestTemplate.postForEntity(this.base.toString() + "/register", httpEntity, UserInfo.class);
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+        HttpEntity<UserInfo> httpEntity = new HttpEntity<UserInfo>(userInfo, headers);
+        ResponseEntity<ResponseUserInfo> responseEntity = testRestTemplate.postForEntity(this.base.toString() + "/register", httpEntity, ResponseUserInfo.class);
         System.out.println(responseEntity);
     }
 

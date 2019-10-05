@@ -21,15 +21,15 @@ import java.net.URL;
 @SpringBootTest(classes = OAuthApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserInfoTests {
 
-    static class UserInfo {
+    static class UserInfoDTO {
         private String username;
         private String password;
         private String[] roles;
 
-        public UserInfo() {
+        public UserInfoDTO() {
         }
 
-        public UserInfo(String username, String password, String[] roles) {
+        public UserInfoDTO(String username, String password, String[] roles) {
             this.username = username;
             this.password = password;
             this.roles = roles;
@@ -77,12 +77,12 @@ public class UserInfoTests {
 
     @Test
     public void register() {
-        UserInfo userInfo = new UserInfo("chenlizan", "123456", new String[]{"USER"});
+        UserInfoDTO userInfoDTO = new UserInfoDTO("chenlizan", "123456", new String[]{"USER"});
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
         headers.add("Accept", MediaType.APPLICATION_JSON.toString());
-        HttpEntity<UserInfo> httpEntity = new HttpEntity<UserInfo>(userInfo, headers);
+        HttpEntity<UserInfoDTO> httpEntity = new HttpEntity<UserInfoDTO>(userInfoDTO, headers);
         ResponseEntity<UserInfoVO> responseEntity = testRestTemplate.postForEntity(this.base.toString() + "/register", httpEntity, UserInfoVO.class);
         System.out.println(responseEntity);
     }

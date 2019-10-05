@@ -17,8 +17,8 @@ public class UserInfoController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public UserInfoVO register(@RequestBody UserInfo userInfo) throws MongoException {
-        UserInfo userInfoPO = userInfoService.save(new UserInfo(userInfo.getUsername(), userInfo.getPassword(), userInfo.getRoles()));
+    public UserInfoVO register(@RequestBody UserInfoDTO userInfoDTO) throws MongoException {
+        UserInfo userInfoPO = userInfoService.save(new UserInfo(userInfoDTO.getUsername(), userInfoDTO.getPassword(), userInfoDTO.getRoles()));
         return new UserInfoVO(userInfoPO);
     }
 

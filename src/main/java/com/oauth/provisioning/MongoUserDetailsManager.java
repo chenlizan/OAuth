@@ -1,8 +1,10 @@
 package com.oauth.provisioning;
 
+import com.oauth.mongo.dao.UserInfoDao;
 import com.oauth.mongo.entity.UserInfo;
-import com.oauth.mongo.repository.UserInfoRepository;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.SpringSecurityMessageSource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -12,7 +14,8 @@ import java.util.Collection;
 
 public class MongoUserDetailsManager implements UserDetailsManager {
 
-    private UserInfoRepository userInfoRepository;
+    protected MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
+    private UserInfoDao userInfoDao;
 
     private void validateUserDetails(UserDetails user) {
         Assert.hasText(user.getUsername(), "Username may not be empty or null");
@@ -32,8 +35,8 @@ public class MongoUserDetailsManager implements UserDetailsManager {
     public MongoUserDetailsManager() {
     }
 
-    public MongoUserDetailsManager(UserInfoRepository userInfoRepository) {
-        this.userInfoRepository = userInfoRepository;
+    public MongoUserDetailsManager(UserInfoDao userInfoDao) {
+        this.userInfoDao = userInfoDao;
     }
 
     // ~ UserDetailsManager implementation
@@ -42,18 +45,18 @@ public class MongoUserDetailsManager implements UserDetailsManager {
     @Override
     public void createUser(final UserDetails user) {
         validateUserDetails(user);
-        this.userInfoRepository.save((UserInfo) user);
+        this.userInfoDao.save((UserInfo) user);
     }
 
     @Override
     public void updateUser(UserDetails user) {
         validateUserDetails(user);
-//        this.userInfoRepository.upsert((UserInfo)user);
+//        this.userInfoDao.upsert((UserInfo)user);
     }
 
     @Override
     public void deleteUser(String username) {
-//        this.userInfoRepository.findOne({username:username})
+//        this.userInfoDao.findOne({username:username})
     }
 
     @Override
@@ -68,6 +71,12 @@ public class MongoUserDetailsManager implements UserDetailsManager {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        UserInfo userInfo = this.userInfoDao.findByUsername(username);
+        if (userInfo == null) {
+            throw new UsernameNotFoundException(
+                    this.messages.getMessage("UserInfoDao.notFound",
+                            new Object[] { username }, "Username {0} not found"));
+        }
+        return userInfo;
     }
 }

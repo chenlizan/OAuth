@@ -47,6 +47,28 @@ public class UserInfo implements UserDetails {
         this.authorities = Collections.unmodifiableSet(sortAuthorities(AuthorityUtils.createAuthorityList(roles)));
     }
 
+    public UserInfo(String username, String password, boolean enabled,
+                    boolean accountNonExpired, boolean credentialsNonExpired,
+                    boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+
+        if (((username == null) || "".equals(username)) || (password == null)) {
+            throw new IllegalArgumentException(
+                    "Cannot pass null or empty values to constructor");
+        }
+
+        this.username = username;
+        this.password = password;
+        this.enabled = enabled;
+        this.accountNonExpired = accountNonExpired;
+        this.credentialsNonExpired = credentialsNonExpired;
+        this.accountNonLocked = accountNonLocked;
+        this.authorities = Collections.unmodifiableSet(sortAuthorities(authorities));
+    }
+
+    public String getId() {
+        return id;
+    }
+
     public String[] getRoles() {
         return this.roles;
     }

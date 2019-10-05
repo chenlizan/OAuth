@@ -2,34 +2,14 @@ package com.oauth.user;
 
 import com.mongodb.MongoException;
 import com.oauth.mongo.entity.UserInfo;
-import com.oauth.mongo.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.Serializable;
 
 @RestController
 public class UserInfoController {
 
-    private static class ResponseUserInfo implements Serializable {
-        private String username;
-        private String password;
-
-        public ResponseUserInfo() {
-        }
-
-        public ResponseUserInfo(String username, String password) {
-            this.username = username;
-            this.password = password;
-        }
-    }
-
     @Autowired
-    private MongoOperations mongoOperations;
-
-    @Autowired
-    private UserInfoRepository userInfoRepository;
+    private UserInfoService userInfoService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index() {
@@ -37,9 +17,14 @@ public class UserInfoController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public Object register(@RequestBody UserInfo userInfo) throws MongoException {
-        userInfoRepository.save(new UserInfo(userInfo.getUsername(), userInfo.getPassword(), userInfo.getRoles()));
-        return new ResponseUserInfo(userInfo.getUsername(), userInfo.getPassword());
+    public UserInfoVO register(@RequestBody UserInfo userInfo) throws MongoException {
+        UserInfo userInfoPO = userInfoService.save(new UserInfo(userInfo.getUsername(), userInfo.getPassword(), userInfo.getRoles()));
+        return new UserInfoVO(userInfoPO);
+    }
+
+    @RequestMapping(value = "/getCode", method = RequestMethod.GET)
+    public String getCode(@RequestParam(required = false, value = "code") String code) {
+        return code;
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -48,7 +33,6 @@ public class UserInfoController {
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    @ResponseBody
     public String logout() {
         System.out.println("logout");
         return "success logout";

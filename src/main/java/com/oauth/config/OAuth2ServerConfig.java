@@ -56,7 +56,7 @@ public class OAuth2ServerConfig {
             clients.inMemory()
                     .withClient("client")
                     .secret("secret")
-                    .redirectUris("http://localhost:8080")
+                    .redirectUris("http://localhost:8080/getCode")
                     .authorizedGrantTypes("authorization_code", "password", "refresh_token")
                     .scopes("all")
                     .resourceIds("oauth2-resource")

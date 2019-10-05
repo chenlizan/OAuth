@@ -1,12 +1,10 @@
 package com.oauth.user;
 
 import com.oauth.main.OAuthApplication;
-import com.oauth.mongo.entity.UserInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -16,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.Serializable;
 import java.net.URL;
 
 
@@ -24,16 +21,42 @@ import java.net.URL;
 @SpringBootTest(classes = OAuthApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserInfoTests {
 
-    private static class ResponseUserInfo implements Serializable {
+    static class UserInfo {
         private String username;
         private String password;
+        private String[] roles;
 
-        public ResponseUserInfo() {
+        public UserInfo() {
         }
 
-        public ResponseUserInfo(String username, String password) {
+        public UserInfo(String username, String password, String[] roles) {
             this.username = username;
             this.password = password;
+            this.roles = roles;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public String[] getRoles() {
+            return roles;
+        }
+
+        public void setRoles(String[] roles) {
+            this.roles = roles;
         }
     }
 
@@ -54,16 +77,13 @@ public class UserInfoTests {
 
     @Test
     public void register() {
-        UserInfo userInfo = new UserInfo();
-        userInfo.setUsername("chenlizan");
-        userInfo.setPassword("123456");
-        userInfo.setRoles(new String[]{"USER"});
+        UserInfo userInfo = new UserInfo("chenlizan", "123456", new String[]{"USER"});
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
         headers.add("Accept", MediaType.APPLICATION_JSON.toString());
         HttpEntity<UserInfo> httpEntity = new HttpEntity<UserInfo>(userInfo, headers);
-        ResponseEntity<ResponseUserInfo> responseEntity = testRestTemplate.postForEntity(this.base.toString() + "/register", httpEntity, ResponseUserInfo.class);
+        ResponseEntity<UserInfoVO> responseEntity = testRestTemplate.postForEntity(this.base.toString() + "/register", httpEntity, UserInfoVO.class);
         System.out.println(responseEntity);
     }
 

@@ -1,7 +1,7 @@
 package com.oauth.config;
 
 import com.oauth.filter.MyFilter;
-import com.oauth.mongo.repository.UserInfoRepository;
+import com.oauth.mongo.dao.UserInfoDao;
 import com.oauth.provisioning.MongoUserDetailsManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    private UserInfoRepository userInfoRepository;
+    private UserInfoDao userInfoDao;
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -52,13 +52,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     @Override
     protected UserDetailsService userDetailsService() {
-        MongoUserDetailsManager manager = new MongoUserDetailsManager(userInfoRepository);
+        MongoUserDetailsManager manager = new MongoUserDetailsManager(userInfoDao);
         return manager;
     }
 
 }
 
-//http://localhost:8080/oauth/authorize?response_type=code&client_id=client&redirect_uri=http://localhost:8080
+//http://localhost:8080/oauth/authorize?response_type=code&client_id=client&scop=all&state=clz&redirect_uri=http://localhost:8080/getCode
 
 /**
  * 二者关系

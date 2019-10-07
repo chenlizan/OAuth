@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable();
         http
                 .authorizeRequests()
-                .antMatchers("/oauth/**", "/register").permitAll()
+                .antMatchers("/api/**", "/register").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin();
@@ -58,11 +58,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 }
 
-//http://localhost:8080/oauth/authorize?response_type=code&client_id=client&scop=all&state=clz&redirect_uri=http://localhost:8080/getCode
 
 /**
+ * 获取code
+ * http://localhost:8080/oauth/authorize?response_type=code&client_id=client&scop=all&state=clz&redirect_uri=http://localhost:8080/getCode
+ * <p>
  * 二者关系
- * WebSecurityConfigurerAdapter用于保护oauth相关的endpoints，同时主要作用于用户的登录(form login,Basic auth)
+ * WebSecurityConfigurerAdapter用于保护oauth相关的endpoints，同时主要作用于用户的登录(form login)
  * ResourceServerConfigurerAdapter用于保护oauth要开放的资源，同时主要作用于client端以及token的认证(Bearer auth)
  * 因此二者是分工协作的
  * <p>

@@ -11,11 +11,6 @@ public class UserInfoController {
     @Autowired
     private UserInfoService userInfoService;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index() {
-        return "Hello Spring Security";
-    }
-
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public UserInfoVO register(@RequestBody UserInfoDTO userInfoDTO) throws MongoException {
         UserInfo userInfoPO = userInfoService.save(new UserInfo(userInfoDTO.getUsername(), userInfoDTO.getPassword(), userInfoDTO.getRoles()));
@@ -25,17 +20,6 @@ public class UserInfoController {
     @RequestMapping(value = "/getCode", method = RequestMethod.GET)
     public String getCode(@RequestParam(required = false, value = "code") String code) {
         return code;
-    }
-
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login() {
-        return "success login";
-    }
-
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public String logout() {
-        System.out.println("logout");
-        return "success logout";
     }
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)

@@ -3,17 +3,21 @@ package com.oauth.user;
 import com.mongodb.MongoException;
 import com.oauth.mongo.entity.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserInfoController {
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private UserInfoService userInfoService;
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public UserInfoVO register(@RequestBody UserInfoDTO userInfoDTO) throws MongoException {
-        UserInfo userInfoPO = userInfoService.save(new UserInfo(userInfoDTO.getUsername(), userInfoDTO.getPassword(), userInfoDTO.getRoles()));
+        UserInfo userInfoPO = userInfoService.save(new UserInfo(userInfoDTO.getUsername(), passwordEncoder.encode(userInfoDTO.getPassword()), userInfoDTO.getRoles()));
         return new UserInfoVO(userInfoPO);
     }
 

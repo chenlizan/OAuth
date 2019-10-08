@@ -78,7 +78,7 @@ public class MongoUserDetailsManager implements UserDetailsManager {
     @Override
     public void updateUser(UserDetails user) {
         validateUserDetails(user);
-//        this.userInfoDao.upsert((UserInfo)user);
+//        this.userInfoDao.save((UserInfo)user);
     }
 
     @Override

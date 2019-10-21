@@ -2,6 +2,7 @@ package com.oauth.provisioning;
 
 import com.oauth.mongo.dao.UserInfoDao;
 import com.oauth.mongo.entity.UserInfo;
+import com.oauth.user.UserInfoDTO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +35,9 @@ public class MongoUserDetailsManager implements UserDetailsManager {
     protected final Log logger = LogFactory.getLog(getClass());
 
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     private UserInfoDao userInfoDao;
 
@@ -78,7 +86,14 @@ public class MongoUserDetailsManager implements UserDetailsManager {
     @Override
     public void updateUser(UserDetails user) {
         validateUserDetails(user);
-//        this.userInfoDao.save((UserInfo)user);
+        UserInfo userInfo = this.userInfoDao.findByUsername(user.getUsername());
+
+        Query query = new Query();
+        query.addCriteria(Criteria.where("username").is(userInfo.getUsername()));
+        Update update = new Update();
+        update.set("nickname", userInfo.getNickname());
+
+        mongoTemplate.upsert(query, update, UserInfo.class);
     }
 
     @Override
@@ -113,10 +128,18 @@ public class MongoUserDetailsManager implements UserDetailsManager {
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     username, oldPassword));
-        }
-        else {
+        } else {
             logger.debug("No authentication manager set. Password won't be re-checked.");
         }
+
+        UserInfoDTO userInfoDTO = new UserInfoDTO(username, newPassword, new String[]{});
+
+        Query query = new Query();
+        query.addCriteria(Criteria.where("username").is(username));
+        Update update = new Update();
+        update.set("password", userInfoDTO.getPassword());
+
+        mongoTemplate.upsert(query, update, UserInfo.class);
     }
 
     @Override

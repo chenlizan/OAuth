@@ -6,7 +6,6 @@ import com.oauth.user.UserInfoDTO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -24,6 +23,7 @@ import org.springframework.security.core.SpringSecurityMessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.util.Assert;
 
@@ -38,6 +38,9 @@ public class MongoUserDetailsManager implements UserDetailsManager {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private UserInfoDao userInfoDao;
 
@@ -137,7 +140,7 @@ public class MongoUserDetailsManager implements UserDetailsManager {
         Query query = new Query();
         query.addCriteria(Criteria.where("username").is(username));
         Update update = new Update();
-        update.set("password", userInfoDTO.getPassword());
+        update.set("password", passwordEncoder.encode(userInfoDTO.getPassword()));
 
         mongoTemplate.upsert(query, update, UserInfo.class);
     }

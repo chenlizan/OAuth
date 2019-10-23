@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -40,6 +41,9 @@ public class OAuth2ServerConfig {
         @Qualifier("authenticationManagerBean")
         private AuthenticationManager authenticationManager;
 
+        @Autowired
+        private PasswordEncoder passwordEncoder;
+
         @Override
         public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
             security
@@ -55,7 +59,7 @@ public class OAuth2ServerConfig {
         public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
             clients.inMemory()
                     .withClient("client")
-                    .secret("secret")
+                    .secret(passwordEncoder.encode("secret"))
                     .redirectUris("http://localhost:8080/getCode")
                     .authorizedGrantTypes("authorization_code", "password", "refresh_token")
                     .scopes("all")

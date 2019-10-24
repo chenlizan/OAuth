@@ -4,6 +4,7 @@ public class UserInfoDTO {
     private String username;
     private String password;
     private String[] roles;
+    private String nickname;
 
     public UserInfoDTO() {
     }
@@ -36,5 +37,13 @@ public class UserInfoDTO {
 
     public void setRoles(String[] roles) {
         this.roles = roles;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

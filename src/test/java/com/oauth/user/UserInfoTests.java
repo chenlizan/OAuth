@@ -13,6 +13,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.net.URL;
 
@@ -20,45 +22,6 @@ import java.net.URL;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = OAuthApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserInfoTests {
-
-    static class UserInfoDTO {
-        private String username;
-        private String password;
-        private String[] roles;
-
-        public UserInfoDTO() {
-        }
-
-        public UserInfoDTO(String username, String password, String[] roles) {
-            this.username = username;
-            this.password = password;
-            this.roles = roles;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-
-        public String[] getRoles() {
-            return roles;
-        }
-
-        public void setRoles(String[] roles) {
-            this.roles = roles;
-        }
-    }
 
     @LocalServerPort
     private int port;
@@ -76,6 +39,20 @@ public class UserInfoTests {
     }
 
     @Test
+    public void getAccessToken() throws Exception {
+        MultiValueMap<String, Object> multiValueMap = new LinkedMultiValueMap<>();
+        multiValueMap.add("username", "chenlizan");
+        multiValueMap.add("password", "123456");
+        multiValueMap.add("grant_type", "password");
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/x-www-form-urlencoded");
+        headers.setContentType(type);
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(multiValueMap, headers);
+        testRestTemplate.postForEntity(this.base.toString() + "/oauth/token", httpEntity, UserInfoVO.class);
+//        System.out.println(responseEntity);
+    }
+
+    @Test
     public void register() {
         UserInfoDTO userInfoDTO = new UserInfoDTO("chenlizan", "123456", new String[]{"USER"});
         HttpHeaders headers = new HttpHeaders();
@@ -84,6 +61,19 @@ public class UserInfoTests {
         headers.add("Accept", MediaType.APPLICATION_JSON.toString());
         HttpEntity<UserInfoDTO> httpEntity = new HttpEntity<UserInfoDTO>(userInfoDTO, headers);
         ResponseEntity<UserInfoVO> responseEntity = testRestTemplate.postForEntity(this.base.toString() + "/register", httpEntity, UserInfoVO.class);
+        System.out.println(responseEntity);
+    }
+
+    @Test
+    public void updateUserInfo() {
+        UserInfoDTO userInfoDTO = new UserInfoDTO();
+        userInfoDTO.setNickname("clz");
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        headers.setContentType(type);
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+        HttpEntity<UserInfoDTO> httpEntity = new HttpEntity<UserInfoDTO>(userInfoDTO, headers);
+        ResponseEntity<UserInfoVO> responseEntity = testRestTemplate.postForEntity(this.base.toString() + "/updateUserInfo", httpEntity, UserInfoVO.class);
         System.out.println(responseEntity);
     }
 

@@ -44,12 +44,15 @@ public class UserInfoTests {
         multiValueMap.add("username", "chenlizan");
         multiValueMap.add("password", "123456");
         multiValueMap.add("grant_type", "password");
+        multiValueMap.add("client_id", "client");
+        multiValueMap.add("client_secret", "secret");
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/x-www-form-urlencoded");
         headers.setContentType(type);
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(multiValueMap, headers);
-        testRestTemplate.postForEntity(this.base.toString() + "/oauth/token", httpEntity, UserInfoVO.class);
-//        System.out.println(responseEntity);
+        ResponseEntity responseEntity = testRestTemplate.postForEntity(this.base.toString() + "/oauth/token", httpEntity, Object.class);
+        System.out.println(responseEntity);
     }
 
     @Test

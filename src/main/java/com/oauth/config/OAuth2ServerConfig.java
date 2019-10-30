@@ -70,7 +70,9 @@ public class OAuth2ServerConfig {
 
         @Override
         public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-            endpoints.authenticationManager(authenticationManager);
+            endpoints
+                    .authenticationManager(authenticationManager);
+//                    .pathMapping("/oauth/token", "/oauth/login");
         }
 
     }

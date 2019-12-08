@@ -3,6 +3,7 @@ package com.oauth.user;
 import com.mongodb.MongoException;
 import com.mongodb.client.result.UpdateResult;
 import com.oauth.mongo.entity.UserInfo;
+import io.ipfs.api.IPFS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -12,8 +13,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 public class UserInfoController {
+
+    @Autowired
+    private IPFS IPFSInstance;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -49,7 +55,9 @@ public class UserInfoController {
     }
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public String test() {
+    public String test() throws IOException {
+        String version = IPFSInstance.version();
+        System.out.println(version);
         System.out.println("test");
         return "success test";
     }

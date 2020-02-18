@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.oauth2.client.test.BeforeOAuth2Context;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
@@ -55,6 +52,7 @@ public class UserInfoTests {
         headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString());
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(multiValueMap, headers);
         ResponseEntity responseEntity = testRestTemplate.postForEntity(this.base.toString() + "/oauth/token", httpEntity, Object.class);
+        Assert.assertEquals(responseEntity.getStatusCode().getReasonPhrase(), responseEntity.getStatusCode(), HttpStatus.OK);
         this.access_token = ((LinkedHashMap) responseEntity.getBody()).get("access_token").toString();
     }
 
@@ -66,6 +64,7 @@ public class UserInfoTests {
         headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString());
         HttpEntity<UserInfoDTO> httpEntity = new HttpEntity<UserInfoDTO>(userInfoDTO, headers);
         ResponseEntity<UserInfoVO> responseEntity = testRestTemplate.postForEntity(this.base.toString() + "/register", httpEntity, UserInfoVO.class);
+        Assert.assertEquals(responseEntity.getStatusCode().getReasonPhrase(), responseEntity.getStatusCode(), HttpStatus.OK);
         System.out.println(responseEntity);
     }
 
@@ -79,6 +78,20 @@ public class UserInfoTests {
         headers.setBearerAuth(this.access_token);
         HttpEntity<UserInfoDTO> httpEntity = new HttpEntity<UserInfoDTO>(userInfoDTO, headers);
         ResponseEntity<UserInfoVO> responseEntity = testRestTemplate.postForEntity(this.base.toString() + "/api/updateUserInfo", httpEntity, UserInfoVO.class);
+        Assert.assertEquals(responseEntity.getStatusCode().getReasonPhrase(), responseEntity.getStatusCode(), HttpStatus.OK);
+        System.out.println(responseEntity);
+    }
+
+    @Test
+    public void referApi() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString());
+        headers.setBearerAuth(this.access_token);
+        headers.add("Ncc-Cookie", "nccloudsessionid:1234567890");
+        HttpEntity httpEntity = new HttpEntity(headers);
+        ResponseEntity<String> responseEntity = testRestTemplate.exchange(this.base.toString() + "/api/referApi", HttpMethod.GET, httpEntity, String.class);
+        Assert.assertEquals(responseEntity.getStatusCode().getReasonPhrase(), responseEntity.getStatusCode(), HttpStatus.OK);
         System.out.println(responseEntity);
     }
 

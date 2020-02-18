@@ -54,6 +54,12 @@ public class UserInfoController {
         return updateResult;
     }
 
+    @RequestMapping(value = "/api/referApi", method = RequestMethod.GET)
+    public String referApi(@RequestHeader(required = false, value = "Ncc-Cookie") String ncc_cookie) {
+        System.out.println(ncc_cookie);
+        return "success referApi = " + ncc_cookie;
+    }
+
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String test() throws IOException {
         String version = IPFSInstance.version();
